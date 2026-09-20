@@ -6,3 +6,4 @@ __pycache__/
 scratch/
 .system_generated/
 *.log
+cloudflared.exe
