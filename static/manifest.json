@@ -1,0 +1,26 @@
+{
+  "name": "أسمع مني — مستشار فانتازي الدوري الإنجليزي الذكي",
+  "short_name": "أسمع مني",
+  "description": "مستشار تكتيكي ذكي لمدربي فانتازي الدوري الإنجليزي الممتاز يعتمد على التحليل الإحصائي ونماذج الذكاء الاصطناعي",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070c1e",
+  "theme_color": "#10b981",
+  "orientation": "portrait-primary",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "https://resources.premierleague.com/premierleague/badges/50/t43.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://resources.premierleague.com/premierleague/badges/50/t43.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
