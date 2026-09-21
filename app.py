@@ -4,31 +4,45 @@ FPL Advisor — الخادم الرئيسي للتطبيق (Flask Web Applicatio
 """
 
 import os
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, Response
 import fpl_engine as engine
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
+if not os.path.exists(STATIC_DIR):
+    STATIC_DIR = os.path.join(os.getcwd(), "static")
+
 app = Flask(__name__, static_folder=STATIC_DIR, static_url_path="")
 
 
 @app.route("/")
+@app.route("/index.html")
+@app.route("/api/index.py")
 def index():
-    resp = send_from_directory(app.static_folder, "index.html")
-    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    return resp
+    html_path = os.path.join(STATIC_DIR, "index.html")
+    if os.path.exists(html_path):
+        with open(html_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        return Response(content, mimetype="text/html; charset=utf-8", headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
+    return send_from_directory(STATIC_DIR, "index.html")
 
 
 @app.route("/manifest.json")
 def manifest():
-    return send_from_directory(app.static_folder, "manifest.json", mimetype="application/json")
+    p = os.path.join(STATIC_DIR, "manifest.json")
+    if os.path.exists(p):
+        with open(p, "r", encoding="utf-8") as f:
+            return Response(f.read(), mimetype="application/json; charset=utf-8")
+    return send_from_directory(STATIC_DIR, "manifest.json")
 
 
 @app.route("/sw.js")
 def service_worker():
-    resp = send_from_directory(app.static_folder, "sw.js", mimetype="application/javascript")
-    resp.headers["Service-Worker-Allowed"] = "/"
-    return resp
+    p = os.path.join(STATIC_DIR, "sw.js")
+    if os.path.exists(p):
+        with open(p, "r", encoding="utf-8") as f:
+            return Response(f.read(), mimetype="application/javascript; charset=utf-8", headers={"Service-Worker-Allowed": "/"})
+    return send_from_directory(STATIC_DIR, "sw.js")
 
 
 @app.route("/api/overview")
@@ -81,6 +95,14 @@ def api_team(team_id):
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": "fetch_error", "message": f"حصل خطأ في جلب بيانات الفرقة: {str(e)}"}), 500
+
+
+@app.route("/<path:subpath>")
+def catch_all(subpath):
+    target = os.path.join(STATIC_DIR, subpath)
+    if os.path.isfile(target):
+        return send_from_directory(STATIC_DIR, subpath)
+    return index()
 
 
 if __name__ == "__main__":
